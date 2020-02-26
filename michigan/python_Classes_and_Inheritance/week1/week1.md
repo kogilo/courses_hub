@@ -83,3 +83,9 @@ point1 = 5
 point2 = 10
 print(point1.getx())
 ```
+## 20.3. User Defined Classes
+* We’ve already seen classes like `str, int, float` and `list`. These were defined by Python and made available for us to use.
+* However, in many cases when we are solving problems we need to create data objects that are related to the problem we are trying to solve. We need to create `our own classes`.
+* As an example, consider the concept of a mathematical point. In two dimensions, a point is two numbers (coordinates) that are treated collectively as a single object. Points are often written in parentheses with a comma separating the coordinates. For example, `(0, 0)` represents the origin, and `(x, y)` represents the point x units to the right and y units up from the origin. This `(x,y)` is the state of the point.
+
+* Some of the typical operations that one associates with points might be to ask the point for its x coordinate, `getX`, or to ask for its y coordinate, `getY`. You would want these types of functions available to prevent accidental changes to these instance variables since doing so would allow you to view the values without accessing them directly. You may also wish to calculate the distance of a point from the origin, or the distance of a point from another point, or find the midpoint between two points, or answer the question as to whether a point falls within a given rectangle or circle. We’ll shortly see how we can organize these together with the data.
