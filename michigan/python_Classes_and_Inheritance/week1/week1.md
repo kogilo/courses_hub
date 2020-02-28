@@ -278,3 +278,149 @@ class Animal():
 spider = Animal(4,4)
 spidlimbs = spider.limbs()
 ```
+
+## Instance Variable Search Order
+* when we say
+```python
+print(point1.x)
+```
+python look for **point1** and ask does
+
+
+## Example: Creating Instances from Data
+```python
+cityName = ['Detroit', 'Ann Arbor', 'Pittsburgh', 'Mars', 'New York']
+population = [680250, 117070, 304391, 1683, 8406000]
+states = ['MI', 'MI', 'PA', 'PA', 'NY']
+city_tuples = zip(cityName, population, states)
+print(city_tuples) #list of tuples
+```
+* Suppose you want to create a class for this.
+* You need to ask the following questions:
+ - what should instances store?
+ - In this case it's a little bit obvious every instance should represent an individual city and every individual city it's going to have a name, population and state, and I'm going to call my class city.
+    - name
+    - population
+    - states
+
+```python
+
+cityName = ['Detroit', 'Ann Arbor', 'Pittsburgh', 'Mars', 'New York']
+population = [680250, 117070, 304391, 1683, 8406000]
+states = ['MI', 'MI', 'PA', 'PA', 'NY']
+city_tuples = zip(cityName, population, states)
+#print(city_tuples) #list of tuples
+
+class City:
+  def __init__(self, n, p, s):
+      self.name = n
+      self.population = p
+      self.state = s
+  def __str__(self):
+    return '{}, {}, (pop: {})'.format(self.name, self.state, self.pop)
+
+cities = []
+for city_tup in city_tuples:
+  print(city_tup)
+```
+OR
+
+
+```python
+class City:
+  def __init__(self, n, p, s):
+      self.name = n
+      self.population = p
+      self.state = s
+  def __str__(self):
+    return '{}, {}, (pop: {})'.format(self.name, self.state, self.pop)
+
+cities = []
+for city_tup in city_tuples:
+  name, pop, state = city_tup
+  print(name, pop, state)
+```
+* to create a new city
+
+```python
+class City:
+  def __init__(self, n, p, s):
+      self.name = n
+      self.population = p
+      self.state = s
+  def __str__(self):
+    return '{}, {} (pop: {})'.format(self.name, self.state, self.population)
+
+cities = []
+for city_tup in city_tuples:
+  name, pop, state = city_tup
+  city = City(name, pop, state)
+  # city is instance of the city class
+  print(city)
+
+```
+
+* to Add a new city
+
+```python
+class City:
+  def __init__(self, n, p, s):
+      self.name = n
+      self.population = p
+      self.state = s
+  def __str__(self):
+    return '{}, {} (pop: {})'.format(self.name, self.state, self.population)
+
+cities = []
+for city_tup in city_tuples:
+  name, pop, state = city_tup
+  city = City(name, pop, state)
+  # city is instance of the city class
+  cities.append(city)
+print(cities)
+
+```
+
+* Short way
+
+```python
+class City:
+  def __init__(self, n, p, s):
+      self.name = n
+      self.population = p
+      self.state = s
+  def __str__(self):
+    return '{}, {} (pop: {})'.format(self.name, self.state, self.population)
+
+# cities = []
+# for city_tup in city_tuples:
+#   name, pop, state = city_tup
+#   city = City(name, pop, state)
+#   # city is instance of the city class
+#   cities.append(city)
+
+cities = [City(n, p, s) for (n, p, s) in city_tuples]
+print(cities)
+```
+
+* Shortest way
+
+```python
+class City:
+  def __init__(self, n, p, s):
+      self.name = n
+      self.population = p
+      self.state = s
+  def __str__(self):
+    return '{}, {} (pop: {})'.format(self.name, self.state, self.population)
+
+# cities = []
+# for city_tup in city_tuples:
+#   name, pop, state = city_tup
+#   city = City(name, pop, state)
+#   # city is instance of the city class
+#   cities.append(city)
+
+cities = [City(*t) for t in city_tuples]
+print(cities)
+```
