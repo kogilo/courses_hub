@@ -299,9 +299,9 @@ print(city_tuples) #list of tuples
 * You need to ask the following questions:
  - what should instances store?
  - In this case it's a little bit obvious every instance should represent an individual city and every individual city it's going to have a name, population and state, and I'm going to call my class city.
-    - name
-    - population
-    - states
+    - city name
+    - city population
+    - city state
 
 ```python
 
