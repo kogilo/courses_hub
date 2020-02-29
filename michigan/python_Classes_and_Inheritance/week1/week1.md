@@ -604,3 +604,89 @@ c2 = Cereal("Honey Nut Cheerios", "General Mills", 3)
 print(c1)
 print(c2)
 ```
+
+## Special (dunderscore) Methods
+* Suppose we want to add the coordinates for point1 and point2;
+
+```python
+class Point:
+    """ Point class for representing and manipulating x,y coordinates. """
+
+    def __init__(self, initX, initY):
+
+        self.x = initX
+        self.y = initY
+
+    def __str__(self):
+        return "Point ({}, {})".format(self.x, self.y)
+
+p1 = Point(-5,10)
+p2 = Point(15,20)
+print(p1)
+print(p2)
+print(p1 + p2) # error
+```
+* We need another method, call it as __add__:
+
+```python
+class Point:
+    """ Point class for representing and manipulating x,y coordinates. """
+
+    def __init__(self, initX, initY):
+
+        self.x = initX
+        self.y = initY
+
+    def __str__(self):
+        return "Point ({}, {})".format(self.x, self.y)
+    def __add__(self, otherPoint):
+      return Point(self.x + otherPoint.x, self.y + otherPoint.y)
+    def __sub__(self, otherPoint):
+        return Point(self.x - otherPoint.x, self.y - otherPoint.y)
+
+p1 = Point(-5,10)
+p2 = Point(15,20)
+print(p1)
+print(p2)
+print(p1 + p2)
+print(p1 - p2)
+```
+
+## Instances as Return Values
+* suppose we want a function that return half way between point p an point q:
+
+```python
+class Point:
+    """ Point class for representing and manipulating x,y coordinates. """
+
+    def __init__(self, initX, initY):
+
+        self.x = initX
+        self.y = initY
+
+    def getX(self):
+        return self.x
+
+    def getY(self):
+        return self.y
+
+    def distanceFromOrigin(self):
+        return ((self.x ** 2) + (self.y ** 2)) ** 0.5
+    def halfway(self, target):
+      mx = (self.x + target.x) / 2
+      my = (self.y + target.y) / 2
+      return Point(mx, my)
+
+    def __str__(self):
+        return "x = {}, y = {}".format(self.x, self.y)
+
+p = Point(3,4)
+q = Point(5,12)
+mid = p.halfway(q) # should return a new point that is halfway b/b p and q.
+
+print(mid) # x= 4, y=8
+# you can do;
+print(mid.getx)
+print(mid.gety)
+
+```
