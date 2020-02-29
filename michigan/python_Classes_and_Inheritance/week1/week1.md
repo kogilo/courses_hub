@@ -690,3 +690,8 @@ print(mid.getx)
 print(mid.gety)
 
 ```
+
+## 20.8. Instances as Return Values
+* Functions and methods can return objects. This is actually nothing new since everything in Python is an object and we have been returning values for quite some time. (You can also have lists or tuples of object instances, etc.) The difference here is that we want to have the method create an object using the constructor and then return it as the value of the method.
+
+* Suppose you have a point object and wish to find the midpoint halfway between it and some other target point. We would like to write a method, let’s call it `halfway`, which takes another `Point` as a parameter and returns the `Point` that is halfway between the point and the target point it accepts as input
