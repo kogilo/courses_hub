@@ -732,3 +732,101 @@ print(mid)
 print(mid.getX())
 print(mid.getY())
 ```
+* The resulting Point, mid, has an x value of 4 and a y value of 8. We can also use any other methods on mid since it is a Point object.
+
+
+## Sorting Lists of Instances
+## 20.9. Sorting Lists of Instances
+* You previously learned how to sort lists. Sorting lists of instances of a class is not fundamentally different from sorting lists of objects of any other type. There is a way to define a default sort order for instances, right in the class definition, but it requires defining a bunch of methods or one complicated method, so we won’t bother with that. Instead, you should just provide a key function as a parameter to sorted (or sort).
+
+* Previously, you have seen how to provide such a function when sorting lists of other kinds of objects. For example, given a list of strings, you can sort them in ascending order of their lengths by passing a key parameter. Note that if you refer to a function by name, you give the name of the function without parentheses after it, because you want the function object itself. The sorted function will take care of calling the function, passing the current item in the list. Thus, in the example below, we write `key=len` and **not** `key=len()`.
+```python
+L = ["Cherry", "Apple", "Blueberry"]
+
+print(sorted(L, key=len))
+#alternative form using lambda, if you find that easier to understand
+print(sorted(L, key= lambda x: len(x)))
+
+```
+* When each of the items in a list is an instance of a class, you need to provide a function that takes one instance as an input, and returns a number. The instances will be sorted by their numbers.
+```python
+class Fruit():
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+L = [Fruit("Cherry", 10), Fruit("Apple", 5), Fruit("Blueberry", 20)]
+for f in sorted(L, key=lambda x: x.price):
+    print(f.name)
+
+```
+
+* Sometimes you will find it convenient to define a method for the class that does some computation on the data in an instance. In this case, our class is too simple to really illustrate that. But to simulate it, I’ve defined a method sort_priority that just returns the price that’s stored in the instance. Now, that method, sort_priority takes one instance as input and returns a number. So it is exactly the kind of function we need to provide as the key parameter for sorted. Here it can get a little confusing: to refer to that method, without actually invoking it, you can refer to Fruit.sort_priority. This is analogous to the code above that referred to `len` rather than invoking `len()`.
+
+
+
+```python
+class Fruit():
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def sort_priority(self):
+        return self.price
+
+L = [Fruit("Cherry", 10), Fruit("Apple", 5), Fruit("Blueberry", 20)]
+print("-----sorted by price, referencing a class method-----")
+for f in sorted(L, key=Fruit.sort_priority):
+    print(f.name)
+
+print("---- one more way to do the same thing-----")
+for f in sorted(L, key=lambda x: x.sort_priority()):
+    print(f.name)
+```
+
+# Class Variables and Instance Variables
+## 20.10. Class Variables and Instance Variables
+* You have already seen that each instance of a class has its own namespace with its own instance variables. Two instances of the Point class each have their own instance variable x. Setting x in one instance doesn’t affect the other instance.
+
+* A class can also have class variables. A class variable is set as part of the class definition.
+
+* For example, consider the following version of the Point class. Here we have added a graph method that generates a string representing a little text-based graph with the Point plotted on the graph. It’s not a very pretty graph, in part because the y-axis is stretched like a rubber band, but you can get the idea from this.
+
+* Note that there is an assignment to the variable printed_rep on line 4. It is not inside any method. That makes it a class variable. It is accessed in the same way as instance variables. For example, on line 16, there is a reference to self.printed_rep. If you change line 4, you have it print a different character at the x,y coordinates of the Point in the graph.
+
+```python
+class Point:
+    """ Point class for representing and manipulating x,y coordinates. """
+
+    printed_rep = "*"
+
+    def __init__(self, initX, initY):
+
+        self.x = initX
+        self.y = initY
+
+    def graph(self):
+        rows = []
+        size = max(int(self.x), int(self.y)) + 2
+        for j in range(size-1) :
+            if (j+1) == int(self.y):
+                special_row = str((j+1) % 10) + (" "*(int(self.x) -1)) + self.printed_rep
+                rows.append(special_row)
+            else:
+                rows.append(str((j+1) % 10))
+        rows.reverse()  # put higher values of y first
+        x_axis = ""
+        for i in range(size):
+            x_axis += str(i % 10)
+        rows.append(x_axis)
+
+        return "\n".join(rows)
+
+
+p1 = Point(2, 3)
+p2 = Point(3, 12)
+print(p1.graph())
+print()
+print(p2.graph())
+
+```
