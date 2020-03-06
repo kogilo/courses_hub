@@ -830,3 +830,245 @@ print()
 print(p2.graph())
 
 ```
+* To be able to reason about class variables and instance variables, it is helpful to know the rules that the python interpreter uses. That way, you can mentally simulate what the interpreter does.
+* **When the interpreter sees an expression of the form <obj>.<varname>, it**:
+  - 1. Checks if the object has an instance variable set. If so, it uses that value.
+
+  - 2. If it doesn’t find an instance variable, it checks whether the class has a class variable. If so it uses that value.
+
+  - 3. If it doesn’t find an instance or a class variable, it creates a runtime error (actually, it does one other check first, which you will learn about in the next chapter).
+* **When the interpreter sees an assignment statement of the form <obj>.<varname> = <expr>, it**:
+  - 1. Evaluates the expression on the right-hand side to yield some python object;
+
+  - 2. Sets the instance variable <varname> of <obj> to be bound to that python object. Note that an assignment statement of this form never sets the class variable; it only sets the instance variable.
+* In order to set the class variable, you use an assignment statement of the form <varname> = <expr> at the top-level in a class definition, like on line 4 in the code above to set the class variable printed_rep.
+* **In case you are curious, method definitions also create class variables. Thus, in the code above, graph becomes a class variable that is bound to a function/method object. p1.graph() is evaluated by:**
+  - looking up p1 and finding that it’s an instance of Point
+
+  - looking for an instance variable called graph in p1, but not finding one
+
+  - looking for a class variable called graph in p1’s class, the Point class; it finds a function/method object
+
+  - Because of the () after the word graph, it invokes the function/method object, with the parameter self bound to the object p1 points to.
+* Try running it in codelens and see if you can follow how it all works.
+
+# Thinking About Classes and Instances
+* Before you write any code for classes, there are a few questions that you should ask yourself.
+  - First is, **what kind of data do you actually want to represent with your class?** Is it a list of songs? Is it a list of students? A list of cars et cetera.
+  -  Then, once you know that, then you should ask yourself, **what does one particular instance represent of this class?**. If it's a list of songs, one particular instance might represent a song. One particular instance of a list of students might represent one particular student.
+  - Then from there you should ask yourself, **what are the instance variables? What's unique to every instance that I might have?**. So if it's a list of students, it might be something like a name, a student ID. If it's a list of songs, it might be the artist, the track name, the length, et cetera.
+  - Then after you know that you should also ask, **what methods might you actually want?** So, if every instance is a particular song, then you might have a method, for example, **to paying an external API to get the lyrics for that song**. If it's a student, you might want to have a method to, for example, **send a message to that student**.
+  - It depends again on what your instances represent.
+  - Then finally, you should ask yourself, **what does the printed representation of an instance look like?** So if I print out a particular song, then I might want **to print out the track name, and then the album name, and maybe the length**.
+
+* You should have answers to all of these questions before you start writing code for classes. Now, it's important to know that designing classes is really more of an art than a science. It's very common to also refactor or rewrite classes in instance variables and methods even for experts. But all of this comes more with practice.
+## 20.11. Thinking About Classes and Instances
+* In this chapter, we defined Point with some functionality that can make it easier to write programs that involve **x,y** coordinate **Point** instances. And shortly, you’ll see how you can define classes to represent objects in a game.
+* You can also use self-defined classes to hold data – for example, data you get from making a request to a **REST API**.
+* Before you decide to define a new class, there are a few things to keep in mind, and questions you should ask yourself:
+  - **What is the data that you want to deal with?** (Data about a bunch of songs from iTunes? Data about a bunch of tweets from Twitter? Data about a bunch of hashtag searches on Twitter? Two numbers that represent coordinates of a point on a 2-dimensional plane?)
+  - **What will one instance of your class represent?** In other words, which sort of new thing in your program should have fancy functionality? One song? One hashtag? One tweet? One point? The answer to this question should help you decide what to call the class you define.
+  - **What information should each instance have as instance variables?** This is related to what an instance represents. See if you can make it into a sentence. “Each instance represents one < song > and each < song > has an < artist > and a < title > as instance variables.” Or, “Each instance represents a < Tweet > and each < Tweet > has a < user (who posted it) > and < a message content string > as instance variables.”
+  - **What instance methods should each instance have?** What should each instance be able to do? To continue using the same examples: Maybe each song has a method that uses a lyrics API to get a long string of its lyrics. Maybe each song has a method that returns a string of its artist’s name. Or for a tweet, maybe each tweet has a method that returns the length of the tweet’s message. (Go wild!)
+  - **What should the printed version of an instance look like?** (This question will help you determine how to write the __str__ method.) Maybe, “Each song printed out will show the song title and the artist’s name.” or “Each Tweet printed out will show the username of the person who posted it and the message content of the tweet.”
+* After considering those questions and making decisions about how you’re going to get started with a class definition, you can begin to define your class.
+* Remember that a class definition, like a function definition, is a general description of what every instance of the class should have. (Every Point has an `x` and a `y`.) The class instances are specific: e.g. the Point with a specific `x` and `y` >. You might have a Point with an `x` value of `3` and a `y` value of `2`, so for that particular instance of the class Point, you’d pass in 3 and 2 to the constructor, the __init__ method, like so: `new_point = Point(3,2)`, as you saw in the last sections.
+
+
+## 20.13. A Tamagotchi Game
+* There are also a lot of interesting ways to put user-defined classes to use that don’t involve data from the internet. Let’s pull all these mechanics together in a slightly more interesting way than we got with the Point class. Remember Tamagotchis, the little electronic pets? As time passed, they would get hungry or bored. You had to clean up after them or they would get sick. And you did it all with a few buttons on the device.
+* We are going to make a simplified, text-based version of that. In your problem set and in the chapter on Inheritance <chap_inheritance> we will extend this further.
+* **First, let’s start with a class** `Pet`. **Each instance of the class will be one electronic pet for the user to take care of. Each instance will have a current state, consisting of three instance variables:**
+  - hunger, an integer
+  - boredom, an integer
+  - sounds, a list of strings, each a word that the pet has been taught to say
+* In the __init__ method, hunger and boredom are initialized to random values between 0 and the threshold for being hungry or bored. The **sounds** instance variable is initialized to be a copy of the class variable with the same name. The reason we make a copy of the list is that we will perform destructive operations (appending new sounds to the list). If we didn’t make a copy, then those destructive operations would affect the list that the class variable points to, and thus teaching a sound to any of the pets would teach it to all instances of the class!
+* There is a **clock_tick** method which just increments the boredom and hunger instance variables, simulating the idea that as time passes, the pet gets more bored and hungry.
+* The __str__ method produces a string representation of the pet’s current state, notably whether it is bored or hungry or whether it is happy. It’s bored if the boredom instance variable is larger than the threshold, which is set as a class variable.
+* To relieve boredom, the pet owner can either teach the pet a new word, using the **teach()** method, or interact with the pet, using the **hi()** method. In response to **teach()**, the pet adds the new word to its list of words. In response to the **hi()** method, it prints out one of the words it knows, randomly picking one from its list of known words. Both **hi()** and **teach()** cause an invocation of the **reduce_boredom()** method. It decrements the boredom state by an amount that it reads from the class variable **boredom_decrement**. The boredom state can never go below 0.
+* To relieve hunger, we call the **feed()** method.
+```python
+from random import randrange
+
+class Pet():
+    boredom_decrement = 4
+    hunger_decrement = 6
+    boredom_threshold = 5
+    hunger_threshold = 10
+    sounds = ['Mrrp']
+    def __init__(self, name = "Kitty"):
+        self.name = name
+        self.hunger = randrange(self.hunger_threshold)
+        self.boredom = randrange(self.boredom_threshold)
+        self.sounds = self.sounds[:]  # copy the class attribute, so that when we make changes to it, we won't affect the other Pets in the class
+
+    def clock_tick(self):
+        self.boredom += 1
+        self.hunger += 1
+
+    def mood(self):
+        if self.hunger <= self.hunger_threshold and self.boredom <= self.boredom_threshold:
+            return "happy"
+        elif self.hunger > self.hunger_threshold:
+            return "hungry"
+        else:
+            return "bored"
+
+    def __str__(self):
+        state = "     I'm " + self.name + ". "
+        state += " I feel " + self.mood() + ". "
+        # state += "Hunger {} Boredom {} Words {}".format(self.hunger, self.boredom, self.sounds)
+        return state
+
+    def hi(self):
+        print(self.sounds[randrange(len(self.sounds))])
+        self.reduce_boredom()
+
+    def teach(self, word):
+        self.sounds.append(word)
+        self.reduce_boredom()
+
+    def feed(self):
+        self.reduce_hunger()
+
+    def reduce_hunger(self):
+        self.hunger = max(0, self.hunger - self.hunger_decrement)
+
+    def reduce_boredom(self):
+        self.boredom = max(0, self.boredom - self.boredom_decrement)
+
+```
+* Let’s try making a pet and playing with it a little. Add some of your own commands, too, and keep printing **p1** to see what the effects are. If you want to directly inspect the state, try printing **p1.boredom** or **p1.hunger**.
+```python
+p1 = Pet("Fido")
+print(p1)
+for i in range(10):
+    p1.clock_tick()
+    print(p1)
+p1.feed()
+p1.hi()
+p1.teach("Boo")
+for i in range(10):
+    p1.hi()
+print(p1)
+
+```
+
+* That’s all great if you want to interact with the pet by writing python code. Let’s make a game that non-programmers can play.
+
+* We will use the Listener Loop <chap_listener> pattern. At each iteration, we will display a text prompt reminding the user of what commands are available.
+
+* The user will have a list of pets, each with a name. The user can issue a command to adopt a new pet, which will create a new instance of Pet. Or the user can interact with an existing pet, with a Greet, Teach, or Feed command.
+
+* No matter what the user does, with each command entered, the clock ticks for all their pets. Watch out, if you have too many pets, you won’t be able to keep them all satisfied!
+
+```python
+import sys
+sys.setExecutionLimit(60000)
+
+def whichone(petlist, name):
+    for pet in petlist:
+        if pet.name == name:
+            return pet
+    return None # no pet matched
+
+def play():
+    animals = []
+
+    option = ""
+    base_prompt = """
+        Quit
+        Adopt <petname_with_no_spaces_please>
+        Greet <petname>
+        Teach <petname> <word>
+        Feed <petname>
+
+        Choice: """
+    feedback = ""
+    while True:
+        action = input(feedback + "\n" + base_prompt)
+        feedback = ""
+        words = action.split()
+        if len(words) > 0:
+            command = words[0]
+        else:
+            command = None
+        if command == "Quit":
+            print("Exiting...")
+            return
+        elif command == "Adopt" and len(words) > 1:
+            if whichone(animals, words[1]):
+                feedback += "You already have a pet with that name\n"
+            else:
+                animals.append(Pet(words[1]))
+        elif command == "Greet" and len(words) > 1:
+            pet = whichone(animals, words[1])
+            if not pet:
+                feedback += "I didn't recognize that pet name. Please try again.\n"
+                print()
+            else:
+                pet.hi()
+        elif command == "Teach" and len(words) > 2:
+            pet = whichone(animals, words[1])
+            if not pet:
+                feedback += "I didn't recognize that pet name. Please try again."
+            else:
+                pet.teach(words[2])
+        elif command == "Feed" and len(words) > 1:
+            pet = whichone(animals, words[1])
+            if not pet:
+                feedback += "I didn't recognize that pet name. Please try again."
+            else:
+                pet.feed()
+        else:
+            feedback+= "I didn't understand that. Please try again."
+
+        for pet in animals:
+            pet.clock_tick()
+            feedback += "\n" + pet.__str__()
+
+
+
+play()
+```
+
+## course_4_assessment_1
+* Define a class called **Bike** that accepts a string and a float as input, and assigns those inputs respectively to two instance variables, **color** and **price**. Assign to the variable testOne an instance of Bike whose color is **blue** and whose price is **89.99**. Assign to the variable testTwo an instance of Bike whose color is **purple** and whose price is **25.0**.
+```python
+class Bike():
+    def __init__(self, color, price):
+        self.color = color
+        self.price = price
+
+testOne = Bike('blue', 89.99)
+testTwo = Bike('purple', 25.0)
+```
+
+
+* Create a class called AppleBasket whose constructor accepts two inputs: a string representing a color, and a number representing a quantity of apples. The constructor should initialize two instance variables: apple_color and apple_quantity. Write a class method called increase that increases the quantity by 1 each time it is invoked. You should also write a __str__ method for this class that returns a string of the format: "A basket of [quantity goes here] [color goes here] apples." e.g. "A basket of 4 red apples." or "A basket of 50 blue apples." (Writing some test code that creates instances and assigns values to variables may help you solve this problem!)
+```python
+class AppleBasket():
+    def __init__(self, apple_color, apple_quantity):
+        self.apple_color = apple_color
+        self.apple_quantity = apple_quantity
+    apple_quantity = 0
+    def increase(self):
+        self.apple_quantity+=1
+        return self.apple_quantity
+    def __str__(self):
+        return 'A basket of {} {} apples.'.format(self.apple_quantity, self.apple_color)
+
+```
+* Define a class called BankAccount that accepts the name you want associated with your bank account in a string, and an integer that represents the amount of money in the account. The constructor should initialize two instance variables from those inputs: name and amt. Add a string method so that when you print an instance of BankAccount, you see "Your account, [name goes here], has [start_amt goes here] dollars." Create an instance of this class with "Bob" as the name and 100 as the amount. Save this to the variable t1.
+
+```python
+class BankAccount():
+  def __init__(self, name, amt):
+    self.name = name
+    self.amt = amt
+  def __str__(self):
+    return 'Your account, {}, has {} dollars.'.format(self.name, self.amt)
+
+t1 = BankAccount("Bob", 100)
+print(t1)
+```
