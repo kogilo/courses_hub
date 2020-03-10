@@ -18,7 +18,7 @@
 ## Task 1: Create an AWS CodeCommit Repository
 * 3. In the AWS Management Console, on the Services menu, click Codecommit.
 * 4. Click the **Create repository**
-* 5. On the ** Create repository page, configure:
+* 5. On the **Create repository page, configure**:
   - **Repository name**: My-Repo
   - **Description**: `My first repository`
   - Click `Create`
